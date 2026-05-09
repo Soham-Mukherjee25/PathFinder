@@ -335,8 +335,8 @@
     .font-btn[data-f="mono"] { font-family: var(--font-mono); }
     .font-btn[data-f="serif"] { font-family: var(--font-display); }
 
-    /* ─── HERO ─── */
-    #hero {
+    /* ─── home ─── */
+    #home {
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -346,7 +346,7 @@
       overflow: hidden;
     }
 
-    .hero-bg {
+    .home-bg {
       position: absolute;
       inset: 0;
       z-index: 0;
@@ -383,7 +383,7 @@
       66% { transform: translate(-20px, 20px) scale(0.95); }
     }
 
-    .hero-grid-lines {
+    .home-grid-lines {
       position: absolute;
       inset: 0;
       background-image:
@@ -393,14 +393,14 @@
       mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
     }
 
-    .hero-content {
+    .home-content {
       text-align: center;
       max-width: 800px;
       position: relative;
       z-index: 1;
     }
 
-    .hero-badge {
+    .home-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
@@ -425,7 +425,7 @@
       50% { opacity: 0.4; transform: scale(0.8); }
     }
 
-    .hero-title {
+    .home-title {
       font-family: var(--font-display);
       font-size: clamp(2.75rem, 7vw, 5.5rem);
       line-height: 1.1;
@@ -433,7 +433,7 @@
       margin-bottom: 1.25rem;
       animation: fadeUp 0.8s ease 0.1s both;
     }
-    .hero-title .gradient {
+    .home-title .gradient {
       background: linear-gradient(135deg, var(--accent), var(--accent-3), var(--accent-2));
       background-size: 200% auto;
       -webkit-background-clip: text;
@@ -445,7 +445,7 @@
       to { background-position: 200% center; }
     }
 
-    .hero-sub {
+    .home-sub {
       font-size: clamp(1rem, 2.5vw, 1.25rem);
       color: var(--text-dim);
       max-width: 560px;
@@ -455,7 +455,7 @@
       animation: fadeUp 0.8s ease 0.2s both;
     }
 
-    .hero-cta {
+    .home-cta {
       display: flex;
       gap: 1rem;
       justify-content: center;
@@ -509,7 +509,7 @@
       transform: translateY(-2px);
     }
 
-    .hero-stats {
+    .home-stats {
       display: flex;
       justify-content: center;
       gap: 3rem;
@@ -1043,7 +1043,7 @@
       nav { padding: 0.875rem 1.25rem; }
       .nav-links { display: none; }
       section { padding: 4rem 1.25rem; }
-      .hero-stats { gap: 1.5rem; }
+      .home-stats { gap: 1.5rem; }
       .settings-panel { width: 100%; right: -100%; }
       .quiz-card { padding: 1.75rem; }
       .results-card { padding: 2rem 1.25rem; }
@@ -1210,7 +1210,7 @@
   <nav role="navigation" aria-label="Main navigation">
     <div class="nav-logo" aria-label="PathFinder home">PathFinder</div>
     <ul class="nav-links">
-      <li><a href="#hero">Home</a></li>
+      <li><a href="#home">Home</a></li>
       <li><a href="#streams">Streams</a></li>
       <li><a href="#quiz">Take Quiz</a></li>
       <li><a href="#how">How it Works</a></li>
@@ -1222,27 +1222,27 @@
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section id="hero" aria-labelledby="heroTitle">
-    <div class="hero-bg" aria-hidden="true">
+  <!-- home -->
+  <section id="home" aria-labelledby="homeTitle">
+    <div class="home-bg" aria-hidden="true">
       <div class="orb orb-1"></div>
       <div class="orb orb-2"></div>
       <div class="orb orb-3"></div>
-      <div class="hero-grid-lines"></div>
+      <div class="home-grid-lines"></div>
       <div id="particles"></div>
     </div>
-    <div class="hero-content">
-      <div class="hero-badge" role="status">
+    <div class="home-content">
+      <div class="home-badge" role="status">
         <span class="badge-dot" aria-hidden="true"></span>
         Smart Stream Selection · Class 10 → 11
       </div>
-      <h1 class="hero-title" id="heroTitle">
+      <h1 class="home-title" id="homeTitle">
         Find Your <span class="gradient">Perfect Stream</span> for Class 11
       </h1>
-      <p class="hero-sub">
+      <p class="home-sub">
         Science, Commerce, or Arts? Answer a few thoughtful questions and discover the academic path that truly fits your interests, strengths, and career goals.
       </p>
-      <div class="hero-cta">
+      <div class="home-cta">
         <button class="btn-primary" onclick="document.getElementById('quiz').scrollIntoView({behavior:'smooth'})" aria-label="Start the quiz">
           <span>🚀 Start the Quiz</span>
         </button>
@@ -1250,7 +1250,7 @@
           Explore Streams
         </button>
       </div>
-      <div class="hero-stats" aria-label="Statistics">
+      <div class="home-stats" aria-label="Statistics">
         <div class="stat">
           <div class="stat-num">12</div>
           <div class="stat-label">Smart Questions</div>
@@ -1443,7 +1443,7 @@
     <div class="footer-inner">
       <div class="footer-logo">PathFinder</div>
       <ul class="footer-links">
-        <li><a href="#hero">Home</a></li>
+        <li><a href="#home">Home</a></li>
         <li><a href="#streams">Streams</a></li>
         <li><a href="#quiz">Quiz</a></li>
         <li><a href="#how">How it Works</a></li>
