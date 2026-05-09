@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PathFinder — Discover your ideal academic stream after Class 10. Science, Commerce, or Arts? Find your path with our intelligent quiz." />
+  <meta name="theme-color" content="#0f172a" />
+  <meta property="og:title" content="PathFinder — Your Stream, Your Future" />
+  <meta property="og:description" content="Smart stream selection guide for Class 10 students." />
+  <title>PathFinder — Your Stream, Your Future</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── CSS CUSTOM PROPERTIES ─── */
+    :root {
+      --bg: #0a0f1e;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-glass: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --accent: #6366f1;
+      --accent-2: #8b5cf6;
+      --accent-3: #06b6d4;
+      --science: #3b82f6;
+      --commerce: #10b981;
+      --arts: #f59e0b;
+      --glow: rgba(99,102,241,0.25);
+      --radius: 1.25rem;
+      --radius-sm: 0.75rem;
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body: 'Sora', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    /* Light Theme */
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --bg-card: rgba(255,255,255,0.9);
+      --bg-glass: rgba(0,0,0,0.03);
+      --border: rgba(0,0,0,0.08);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #475569;
+      --glow: rgba(99,102,241,0.15);
+      --shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    /* Ocean Theme */
+    [data-theme="ocean"] {
+      --bg: #020c1b;
+      --bg-card: rgba(2,18,40,0.9);
+      --accent: #00d2ff;
+      --accent-2: #0070f3;
+      --accent-3: #7928ca;
+      --glow: rgba(0,210,255,0.2);
+    }
+
+    /* Forest Theme */
+    [data-theme="forest"] {
+      --bg: #0a1a0f;
+      --bg-card: rgba(10,30,18,0.9);
+      --accent: #22c55e;
+      --accent-2: #16a34a;
+      --accent-3: #84cc16;
+      --glow: rgba(34,197,94,0.2);
+    }
+
+    /* Sunset Theme */
+    [data-theme="sunset"] {
+      --bg: #1a0a00;
+      --bg-card: rgba(30,15,0,0.9);
+      --accent: #f97316;
+      --accent-2: #ef4444;
+      --accent-3: #eab308;
+      --glow: rgba(249,115,22,0.2);
+    }
+
+    /* Font overrides */
+    [data-font="mono"] { --font-body: 'JetBrains Mono', monospace; }
+    [data-font="serif"] { --font-body: 'DM Serif Display', Georgia, serif; }
+
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background var(--transition), color var(--transition);
+      overflow-x: hidden;
+    }
+
+    ::selection { background: var(--accent); color: #fff; }
+
+    img { display: block; max-width: 100%; }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ─── CURSOR ─── */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 99998;
+      transition: transform 0.15s ease, opacity 0.3s;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 99997;
+      transform: translate(-50%, -50%);
+      transition: all 0.12s ease;
+      opacity: 0.6;
+    }
+    @media (hover: none) { .cursor, .cursor-ring { display: none; } }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,15,30,0.6);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      transition: all var(--transition);
+    }
+    [data-theme="light"] nav { background: rgba(248,250,252,0.7); }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      position: relative;
+      transition: color var(--transition);
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--accent);
+      transition: width var(--transition);
+      border-radius: 99px;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-settings {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      backdrop-filter: blur(8px);
+    }
+    .btn-settings:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* ─── SETTINGS PANEL ─── */
+    .settings-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9990;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+    }
+    .settings-overlay.open { opacity: 1; pointer-events: all; }
+
+    .settings-panel {
+      position: fixed;
+      top: 0; right: -380px;
+      width: 360px; height: 100%;
+      z-index: 9991;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      backdrop-filter: blur(40px);
+      padding: 2rem;
+      overflow-y: auto;
+      transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .settings-panel.open { right: 0; }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+    .settings-header h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+    .btn-close {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: all var(--transition);
+    }
+    .btn-close:hover { background: var(--accent); border-color: var(--accent); }
+
+    .settings-section { margin-bottom: 2rem; }
+    .settings-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.875rem;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.625rem;
+    }
+    .theme-btn {
+      padding: 0.625rem;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--bg-glass);
+      color: var(--text);
+    }
+    .theme-btn .swatch {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+    }
+    .theme-btn:hover, .theme-btn.active {
+      border-color: var(--accent);
+      background: var(--glow);
+    }
+
+    .font-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+    .font-btn {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all var(--transition);
+      background: var(--bg-glass);
+      color: var(--text);
+      text-align: left;
+    }
+    .font-btn:hover, .font-btn.active {
+      border-color: var(--accent);
+      background: var(--glow);
+    }
+    .font-btn[data-f="mono"] { font-family: var(--font-mono); }
+    .font-btn[data-f="serif"] { font-family: var(--font-display); }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: float 8s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      top: -200px; left: -200px;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+      animation-delay: -4s;
+    }
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, var(--accent-3) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -2s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 800px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      background: var(--glow);
+      border: 1px solid var(--accent);
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s ease both;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.75rem, 7vw, 5.5rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+      animation: fadeUp 0.8s ease 0.1s both;
+    }
+    .hero-title .gradient {
+      background: linear-gradient(135deg, var(--accent), var(--accent-3), var(--accent-2));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--text-dim);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      font-weight: 300;
+      line-height: 1.7;
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s ease 0.3s both;
+    }
+
+    .btn-primary {
+      padding: 0.875rem 2rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition);
+      box-shadow: 0 4px 20px var(--glow);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--glow); }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-secondary {
+      padding: 0.875rem 2rem;
+      background: var(--bg-glass);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      backdrop-filter: blur(8px);
+    }
+    .btn-secondary:hover {
+      background: var(--glow);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 4rem;
+      animation: fadeUp 0.8s ease 0.4s both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+    /* ─── SECTION BASE ─── */
+    section { padding: 6rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 0.875rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      font-size: 1.0625rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ─── FADE-UP SCROLL ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-up-delay-1 { transition-delay: 0.1s; }
+    .fade-up-delay-2 { transition-delay: 0.2s; }
+    .fade-up-delay-3 { transition-delay: 0.3s; }
+    .fade-up-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── STREAMS SECTION ─── */
+    #streams { background: var(--bg); }
+
+    .streams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .stream-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: default;
+      backdrop-filter: blur(12px);
+    }
+    .stream-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      transition: height 0.4s ease;
+    }
+    .stream-card.science::before { background: linear-gradient(90deg, var(--science), #60a5fa); }
+    .stream-card.commerce::before { background: linear-gradient(90deg, var(--commerce), #34d399); }
+    .stream-card.arts::before { background: linear-gradient(90deg, var(--arts), #fcd34d); }
+
+    .stream-card:hover {
+      transform: translateY(-6px);
+      border-color: transparent;
+      box-shadow: var(--shadow);
+    }
+    .stream-card.science:hover { box-shadow: 0 20px 60px rgba(59,130,246,0.25); }
+    .stream-card.commerce:hover { box-shadow: 0 20px 60px rgba(16,185,129,0.25); }
+    .stream-card.arts:hover { box-shadow: 0 20px 60px rgba(245,158,11,0.25); }
+
+    .stream-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.25rem;
+      display: block;
+    }
+    .stream-name {
+      font-family: var(--font-display);
+      font-size: 1.625rem;
+      margin-bottom: 0.5rem;
+    }
+    .stream-name.science { color: #60a5fa; }
+    .stream-name.commerce { color: #34d399; }
+    .stream-name.arts { color: #fcd34d; }
+
+    .stream-desc {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+
+    .stream-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.3rem 0.75rem;
+      border-radius: 99px;
+      border: 1px solid;
+    }
+    .tag.science { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); color: #93c5fd; }
+    .tag.commerce { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #6ee7b7; }
+    .tag.arts { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: #fde68a; }
+
+    /* ─── QUIZ SECTION ─── */
+    #quiz {
+      position: relative;
+      overflow: hidden;
+    }
+    #quiz::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, var(--glow), transparent);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .quiz-wrapper {
+      max-width: 720px;
+      margin: 3rem auto 0;
+    }
+
+    /* Progress bar */
+    .progress-bar-wrap {
+      background: var(--border);
+      border-radius: 99px;
+      height: 6px;
+      margin-bottom: 2.5rem;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-3));
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 10px var(--glow);
+    }
+    .progress-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-mono);
+    }
+
+    /* Quiz card */
+    .quiz-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+    .quiz-card::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 50% 50%, var(--glow) 0%, transparent 60%);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .q-num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+    .q-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      line-height: 1.45;
+      margin-bottom: 2rem;
+      letter-spacing: -0.01em;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-glass);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      color: var(--text);
+      text-align: left;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .option-btn .opt-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      width: 24px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .option-btn .opt-text { position: relative; z-index: 1; }
+    .option-btn:hover {
+      border-color: var(--accent);
+      transform: translateX(6px);
+    }
+    .option-btn:hover::before { opacity: 0.12; }
+    .option-btn.selected {
+      border-color: var(--accent);
+      background: var(--glow);
+    }
+    .option-btn.selected::before { opacity: 0.2; }
+    .option-btn.selected .opt-label { color: #fff; }
+
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    .btn-nav {
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-nav.prev {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .btn-nav.prev:hover { color: var(--text); border-color: var(--text-muted); }
+    .btn-nav.next {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border: none;
+      color: #fff;
+    }
+    .btn-nav.next:hover { transform: translateX(4px); box-shadow: 0 4px 20px var(--glow); }
+    .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+
+    /* ─── RESULTS ─── */
+    .results-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3rem;
+      backdrop-filter: blur(20px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-confetti {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .result-emoji {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 1rem;
+      animation: bounce 1s ease infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .result-stream-name {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-match {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1.25rem;
+      border-radius: 99px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .result-desc {
+      color: var(--text-dim);
+      max-width: 520px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    .career-paths {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .career-path {
+      padding: 1.25rem;
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+    }
+    .career-path:hover { border-color: var(--accent); background: var(--glow); }
+    .career-path-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .career-path-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .career-path-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+    .jee-banner {
+      margin: 1.5rem 0;
+      padding: 1.25rem 1.75rem;
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(6,182,212,0.15));
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-align: left;
+    }
+    .jee-banner-icon { font-size: 2rem; flex-shrink: 0; }
+    .jee-banner-text h4 { font-weight: 600; margin-bottom: 0.25rem; }
+    .jee-banner-text p { font-size: 0.875rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+    .jee-banner-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--accent);
+      transition: gap var(--transition);
+    }
+    .jee-banner-link:hover { gap: 0.625rem; }
+
+    .result-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    /* Score bars */
+    .score-breakdown {
+      margin: 2rem 0;
+    }
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.875rem;
+    }
+    .score-label { font-size: 0.875rem; width: 100px; text-align: left; color: var(--text-dim); flex-shrink: 0; }
+    .score-bar-wrap { flex: 1; background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+    .score-pct { font-size: 0.8rem; font-family: var(--font-mono); color: var(--text-muted); width: 36px; text-align: right; }
+
+    /* ─── HOW IT WORKS ─── */
+    #how {
+      background: var(--bg);
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .step-card {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      position: relative;
+      transition: all var(--transition);
+    }
+    .step-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 12px 40px var(--glow); }
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+    }
+    .step-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .step-title { font-weight: 600; margin-bottom: 0.5rem; }
+    .step-desc { font-size: 0.875rem; color: var(--text-dim); line-height: 1.6; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .footer-links a {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .footer-copy a { color: var(--accent); transition: opacity var(--transition); }
+    .footer-copy a:hover { opacity: 0.8; }
+    .copyright-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.3rem 0.875rem;
+      background: var(--glow);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .quiz-slide-in {
+      animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .quiz-slide-out {
+      animation: slideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    @keyframes slideOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(-30px); }
+    }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 0.875rem 1.25rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.25rem; }
+      .hero-stats { gap: 1.5rem; }
+      .settings-panel { width: 100%; right: -100%; }
+      .quiz-card { padding: 1.75rem; }
+      .results-card { padding: 2rem 1.25rem; }
+      .footer-links { gap: 1rem; }
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Hidden */
+    .hidden { display: none !important; }
+
+    /* ─── SCROLL TO TOP ─── */
+    .scroll-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 44px; height: 44px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px var(--glow);
+      transition: all var(--transition);
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      z-index: 999;
+    }
+    .scroll-top.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+    .scroll-top:hover { transform: translateY(-3px); box-shadow: 0 8px 30px var(--glow); }
+
+    /* ─── LOADING SCREEN ─── */
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1.5rem;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .loader.done { opacity: 0; pointer-events: none; }
+    .loader-logo {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .loader-bar {
+      width: 200px;
+      height: 3px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .loader-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-3));
+      border-radius: 99px;
+      animation: load 1.2s ease forwards;
+    }
+    @keyframes load {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    /* Particle container */
+    #particles { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: var(--accent);
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleFloat linear infinite;
+    }
+    @keyframes particleFloat {
+      0% { transform: translateY(0) translateX(0); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.2; }
+      100% { transform: translateY(-120vh) translateX(var(--dx)); opacity: 0; }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- LOADER -->
+  <div class="loader" id="loader" role="status" aria-label="Loading PathFinder">
+    <div class="loader-logo">PathFinder</div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  </div>
+
+  <!-- CURSOR -->
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <!-- SCROLL TO TOP -->
+  <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">↑</button>
+
+  <!-- SETTINGS OVERLAY -->
+  <div class="settings-overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-label="Appearance settings"></div>
+
+  <!-- SETTINGS PANEL -->
+  <aside class="settings-panel" id="settingsPanel" aria-label="Settings panel">
+    <div class="settings-header">
+      <h3>⚙ Appearance</h3>
+      <button class="btn-close" id="closePanelBtn" aria-label="Close settings">✕</button>
+    </div>
+
+    <div class="settings-section">
+      <p class="settings-label">Colour Theme</p>
+      <div class="theme-grid">
+        <button class="theme-btn active" data-theme="dark" aria-pressed="true">
+          <span class="swatch" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></span>
+          Dark
+        </button>
+        <button class="theme-btn" data-theme="light" aria-pressed="false">
+          <span class="swatch" style="background:linear-gradient(135deg,#6366f1,#06b6d4)"></span>
+          Light
+        </button>
+        <button class="theme-btn" data-theme="ocean" aria-pressed="false">
+          <span class="swatch" style="background:linear-gradient(135deg,#00d2ff,#0070f3)"></span>
+          Ocean
+        </button>
+        <button class="theme-btn" data-theme="forest" aria-pressed="false">
+          <span class="swatch" style="background:linear-gradient(135deg,#22c55e,#84cc16)"></span>
+          Forest
+        </button>
+        <button class="theme-btn" data-theme="sunset" aria-pressed="false">
+          <span class="swatch" style="background:linear-gradient(135deg,#f97316,#ef4444)"></span>
+          Sunset
+        </button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <p class="settings-label">Font Style</p>
+      <div class="font-grid">
+        <button class="font-btn active" data-f="sora" aria-pressed="true" style="font-family:'Sora',sans-serif">Sora — Modern & Clean</button>
+        <button class="font-btn" data-f="mono" aria-pressed="false" style="font-family:'JetBrains Mono',monospace">Mono — Technical</button>
+        <button class="font-btn" data-f="serif" aria-pressed="false" style="font-family:'DM Serif Display',serif">Serif — Classic</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- NAV -->
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="nav-logo" aria-label="PathFinder home">PathFinder</div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#streams">Streams</a></li>
+      <li><a href="#quiz">Take Quiz</a></li>
+      <li><a href="#how">How it Works</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-settings" id="openPanelBtn" aria-label="Open appearance settings">
+        ⚙ Settings
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" aria-labelledby="heroTitle">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="hero-grid-lines"></div>
+      <div id="particles"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge" role="status">
+        <span class="badge-dot" aria-hidden="true"></span>
+        Smart Stream Selection · Class 10 → 11
+      </div>
+      <h1 class="hero-title" id="heroTitle">
+        Find Your <span class="gradient">Perfect Stream</span> for Class 11
+      </h1>
+      <p class="hero-sub">
+        Science, Commerce, or Arts? Answer a few thoughtful questions and discover the academic path that truly fits your interests, strengths, and career goals.
+      </p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="document.getElementById('quiz').scrollIntoView({behavior:'smooth'})" aria-label="Start the quiz">
+          <span>🚀 Start the Quiz</span>
+        </button>
+        <button class="btn-secondary" onclick="document.getElementById('streams').scrollIntoView({behavior:'smooth'})" aria-label="Explore streams">
+          Explore Streams
+        </button>
+      </div>
+      <div class="hero-stats" aria-label="Statistics">
+        <div class="stat">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Smart Questions</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Stream Paths</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">15+</div>
+          <div class="stat-label">Career Insights</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STREAMS -->
+  <section id="streams" aria-labelledby="streamsTitle">
+    <div class="container">
+      <p class="section-label fade-up">Explore Your Options</p>
+      <h2 class="section-title fade-up fade-up-delay-1" id="streamsTitle">Three Paths. Infinite Futures.</h2>
+      <p class="section-sub fade-up fade-up-delay-2">Each stream opens a unique world of knowledge and career opportunity. Here's what awaits you in each.</p>
+      <div class="streams-grid">
+
+        <article class="stream-card science fade-up fade-up-delay-1" tabindex="0">
+          <span class="stream-icon" aria-hidden="true">🔬</span>
+          <h3 class="stream-name science">Science</h3>
+          <p class="stream-desc">Dive deep into Physics, Chemistry, Biology, and Mathematics. Unlock doors to engineering, medicine, research, and technology — the stream of innovators and discoverers.</p>
+          <div class="stream-tags">
+            <span class="tag science">PCM — JEE</span>
+            <span class="tag science">PCB — NEET</span>
+            <span class="tag science">Pure Science</span>
+            <span class="tag science">IISER/IISc</span>
+          </div>
+        </article>
+
+        <article class="stream-card commerce fade-up fade-up-delay-2" tabindex="0">
+          <span class="stream-icon" aria-hidden="true">📊</span>
+          <h3 class="stream-name commerce">Commerce</h3>
+          <p class="stream-desc">Master Economics, Accountancy, Business Studies, and Finance. Build the skills to lead businesses, manage money, and shape the economy as an entrepreneur or finance expert.</p>
+          <div class="stream-tags">
+            <span class="tag commerce">CA / CMA</span>
+            <span class="tag commerce">Economics</span>
+            <span class="tag commerce">MBA / BBA</span>
+            <span class="tag commerce">Banking</span>
+          </div>
+        </article>
+
+        <article class="stream-card arts fade-up fade-up-delay-3" tabindex="0">
+          <span class="stream-icon" aria-hidden="true">🎨</span>
+          <h3 class="stream-name arts">Arts & Humanities</h3>
+          <p class="stream-desc">Explore Literature, History, Sociology, Political Science, and more. Perfect for thinkers, writers, administrators, and changemakers who want to understand the world and society.</p>
+          <div class="stream-tags">
+            <span class="tag arts">UPSC / Govt</span>
+            <span class="tag arts">Law</span>
+            <span class="tag arts">Journalism</span>
+            <span class="tag arts">Literature</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" aria-labelledby="howTitle">
+    <div class="container">
+      <p class="section-label fade-up">Simple Process</p>
+      <h2 class="section-title fade-up fade-up-delay-1" id="howTitle">How PathFinder Works</h2>
+      <p class="section-sub fade-up fade-up-delay-2">Our algorithm analyses your academic strengths, interests, and career aspirations to guide you to the right stream.</p>
+      <div class="steps-grid">
+        <div class="step-card fade-up fade-up-delay-1">
+          <div class="step-num">STEP 01</div>
+          <span class="step-icon" aria-hidden="true">📝</span>
+          <h3 class="step-title">Answer Questions</h3>
+          <p class="step-desc">12 carefully designed questions exploring your subjects, hobbies, and future dreams.</p>
+        </div>
+        <div class="step-card fade-up fade-up-delay-2">
+          <div class="step-num">STEP 02</div>
+          <span class="step-icon" aria-hidden="true">🧠</span>
+          <h3 class="step-title">Smart Analysis</h3>
+          <p class="step-desc">Our weighted scoring engine maps your answers across Science, Commerce, and Arts dimensions.</p>
+        </div>
+        <div class="step-card fade-up fade-up-delay-3">
+          <div class="step-num">STEP 03</div>
+          <span class="step-icon" aria-hidden="true">🎯</span>
+          <h3 class="step-title">Get Your Result</h3>
+          <p class="step-desc">Receive a personalised stream recommendation with detailed career paths and next steps.</p>
+        </div>
+        <div class="step-card fade-up fade-up-delay-4">
+          <div class="step-num">STEP 04</div>
+          <span class="step-icon" aria-hidden="true">🚀</span>
+          <h3 class="step-title">Plan Your Future</h3>
+          <p class="step-desc">Explore curated resources and guides tailored specifically to your recommended path.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- QUIZ -->
+  <section id="quiz" aria-labelledby="quizTitle">
+    <div class="container">
+      <p class="section-label fade-up">Personalised Assessment</p>
+      <h2 class="section-title fade-up fade-up-delay-1" id="quizTitle">Discover Your Stream</h2>
+      <p class="section-sub fade-up fade-up-delay-2">12 questions. 5 minutes. A clearer direction for the next 2 years of your life.</p>
+
+      <div class="quiz-wrapper fade-up fade-up-delay-3">
+
+        <!-- Start screen -->
+        <div id="quizStart" class="quiz-card">
+          <div style="text-align:center; padding:1rem 0">
+            <span style="font-size:3.5rem;display:block;margin-bottom:1.25rem">🧭</span>
+            <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:0.75rem;letter-spacing:-0.02em">Ready to find your path?</h3>
+            <p style="color:var(--text-dim);max-width:420px;margin:0 auto 2rem;line-height:1.7">This quiz explores your academic preferences, interests, and goals to recommend the best stream for Class 11. Be honest — there are no wrong answers!</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+              <button class="btn-primary" onclick="startQuiz()" style="font-size:1rem;padding:1rem 2.5rem">
+                <span>Let's Begin →</span>
+              </button>
+            </div>
+            <p style="margin-top:1.5rem;font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono)">~5 min · 12 questions · No signup needed</p>
+          </div>
+        </div>
+
+        <!-- Quiz questions -->
+        <div id="quizBody" class="hidden">
+          <div class="progress-text" id="progressText" aria-live="polite">Question 1 of 12</div>
+          <div class="progress-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="12" aria-valuenow="1" id="progressBar">
+            <div class="progress-bar-fill" id="progressFill" style="width:8.33%"></div>
+          </div>
+          <div class="quiz-card" id="quizCard">
+            <div class="q-num" id="qNum">01 / 12</div>
+            <p class="q-text" id="qText"></p>
+            <div class="options-grid" id="optionsGrid"></div>
+            <div class="quiz-nav">
+              <button class="btn-nav prev" id="prevBtn" onclick="prevQ()" aria-label="Previous question">← Back</button>
+              <button class="btn-nav next" id="nextBtn" onclick="nextQ()" aria-label="Next question">Next →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="quizResult" class="hidden">
+          <div class="results-card" id="resultsCard">
+            <div class="result-confetti" id="confettiContainer" aria-hidden="true"></div>
+            <span class="result-emoji" id="resultEmoji" aria-hidden="true">🎉</span>
+            <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.375rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase">Your Recommended Stream</p>
+            <h2 class="result-stream-name" id="resultName">Science</h2>
+            <div class="result-match" id="resultMatch"></div>
+            <p class="result-desc" id="resultDesc"></p>
+
+            <div class="score-breakdown" id="scoreBreakdown" aria-label="Score breakdown">
+              <p style="font-size:0.875rem;font-weight:600;margin-bottom:1rem;color:var(--text-dim);text-align:left">Your Affinity Scores</p>
+              <div class="score-row">
+                <span class="score-label">🔬 Science</span>
+                <div class="score-bar-wrap"><div class="score-bar-fill" id="sciBar" style="background:linear-gradient(90deg,#3b82f6,#60a5fa);width:0"></div></div>
+                <span class="score-pct" id="sciPct">0%</span>
+              </div>
+              <div class="score-row">
+                <span class="score-label">📊 Commerce</span>
+                <div class="score-bar-wrap"><div class="score-bar-fill" id="comBar" style="background:linear-gradient(90deg,#10b981,#34d399);width:0"></div></div>
+                <span class="score-pct" id="comPct">0%</span>
+              </div>
+              <div class="score-row">
+                <span class="score-label">🎨 Arts</span>
+                <div class="score-bar-wrap"><div class="score-bar-fill" id="artBar" style="background:linear-gradient(90deg,#f59e0b,#fcd34d);width:0"></div></div>
+                <span class="score-pct" id="artPct">0%</span>
+              </div>
+            </div>
+
+            <div id="careerSection"></div>
+            <div id="jeeBanner" class="hidden"></div>
+
+            <div class="result-actions">
+              <button class="btn-primary" onclick="retakeQuiz()"><span>🔄 Retake Quiz</span></button>
+              <button class="btn-secondary" onclick="shareResult()">📤 Share Result</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-logo">PathFinder</div>
+      <ul class="footer-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#streams">Streams</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+        <li><a href="#how">How it Works</a></li>
+      </ul>
+      <p class="footer-copy">
+        Crafted with care for Class 10 students navigating stream selection.<br />
+        <span style="color:var(--text-muted)">PathFinder is a free, non-commercial educational tool.</span>
+      </p>
+      <div class="copyright-badge">
+        © <span id="copyrightYear">2025</span> PathFinder · All rights reserved · Made in India 🇮🇳
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;max-width:500px">
+        Content on this website is protected. Unauthorised reproduction or redistribution is prohibited.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    /* ─── QUIZ DATA ─── */
+    const questions = [
+      {
+        text: "Which subject do you genuinely enjoy spending extra time on — even without it being assigned?",
+        options: [
+          { text: "Mathematics or Physics problems", s: 3, c: 1, a: 0 },
+          { text: "Biology or Chemistry experiments", s: 3, c: 0, a: 0 },
+          { text: "Accountancy, Economics, or Business news", s: 0, c: 3, a: 1 },
+          { text: "History, Literature, or Languages", s: 0, c: 0, a: 3 }
+        ]
+      },
+      {
+        text: "When solving a tough problem, which approach feels most natural to you?",
+        options: [
+          { text: "Work through logic and equations step-by-step", s: 3, c: 1, a: 0 },
+          { text: "Research and analyse different perspectives", s: 1, c: 1, a: 3 },
+          { text: "Draw charts, compare numbers, and find patterns", s: 1, c: 3, a: 0 },
+          { text: "Discuss with others and debate ideas", s: 0, c: 1, a: 3 }
+        ]
+      },
+      {
+        text: "What kind of career excites you the most right now?",
+        options: [
+          { text: "Engineer, doctor, scientist, or researcher", s: 3, c: 0, a: 0 },
+          { text: "Chartered Accountant, banker, entrepreneur", s: 0, c: 3, a: 0 },
+          { text: "IAS/IPS officer, lawyer, journalist, diplomat", s: 0, c: 0, a: 3 },
+          { text: "Teacher, writer, psychologist, or social worker", s: 0, c: 1, a: 3 }
+        ]
+      },
+      {
+        text: "How do you feel about Mathematics?",
+        options: [
+          { text: "Love it — it's my strongest subject", s: 3, c: 2, a: 0 },
+          { text: "I'm okay with it, especially applied/business math", s: 1, c: 2, a: 0 },
+          { text: "It's manageable but not my favourite", s: 1, c: 1, a: 1 },
+          { text: "I prefer reading and writing over calculations", s: 0, c: 0, a: 3 }
+        ]
+      },
+      {
+        text: "Which extracurricular activity would you choose if time wasn't a constraint?",
+        options: [
+          { text: "Robotics club, coding, or science olympiads", s: 3, c: 0, a: 0 },
+          { text: "Business competition, stock market simulation", s: 0, c: 3, a: 0 },
+          { text: "Debate, Model UN, creative writing, drama", s: 0, c: 0, a: 3 },
+          { text: "Sports, art, music, or volunteering", s: 1, c: 1, a: 2 }
+        ]
+      },
+      {
+        text: "Your Social Studies teacher offers you an optional project. Which do you pick?",
+        options: [
+          { text: "The impact of scientific discoveries on society", s: 2, c: 1, a: 2 },
+          { text: "How India's economy has changed since 1991", s: 0, c: 3, a: 1 },
+          { text: "An analysis of a historical political movement", s: 0, c: 0, a: 3 },
+          { text: "The geography of climate change", s: 1, c: 0, a: 2 }
+        ]
+      },
+      {
+        text: "How do you feel about memorising — like dates, reactions, or laws?",
+        options: [
+          { text: "I prefer understanding concepts and applying formulas", s: 3, c: 1, a: 0 },
+          { text: "I'm fine memorising rules and procedures if needed", s: 1, c: 2, a: 1 },
+          { text: "I can remember facts well, especially historical or social", s: 0, c: 1, a: 3 },
+          { text: "I'd rather read deeply and analyse than memorise", s: 0, c: 0, a: 3 }
+        ]
+      },
+      {
+        text: "Which of these achievements would make you proudest in 10 years?",
+        options: [
+          { text: "Getting into IIT / becoming a doctor at AIIMS", s: 3, c: 0, a: 0 },
+          { text: "Running a successful business or becoming a CA", s: 0, c: 3, a: 0 },
+          { text: "Becoming an IAS officer or a respected lawyer", s: 0, c: 0, a: 3 },
+          { text: "Publishing a book, winning an award, making a difference", s: 0, c: 0, a: 3 }
+        ]
+      },
+      {
+        text: "Your friend group is in a debate about a hot topic. What do you do?",
+        options: [
+          { text: "Offer data, statistics, and a logical argument", s: 2, c: 2, a: 1 },
+          { text: "Talk about economic effects and practical consequences", s: 0, c: 3, a: 1 },
+          { text: "Bring in historical context and diverse viewpoints", s: 0, c: 0, a: 3 },
+          { text: "Listen, empathise, and see everyone's side", s: 0, c: 1, a: 2 }
+        ]
+      },
+      {
+        text: "How would you describe your relationship with computers and technology?",
+        options: [
+          { text: "I love coding, AI, robotics — tech is my passion", s: 3, c: 0, a: 0 },
+          { text: "I use tech for spreadsheets, data analysis, presentations", s: 1, c: 2, a: 0 },
+          { text: "I use it for research, writing, and social causes", s: 0, c: 0, a: 2 },
+          { text: "I'm okay with basic tech but don't love it deeply", s: 0, c: 1, a: 1 }
+        ]
+      },
+      {
+        text: "If you had to read a book this weekend, what would you choose?",
+        options: [
+          { text: "A book on physics, space, biology, or mathematics", s: 3, c: 0, a: 0 },
+          { text: "A biography of a business tycoon or economist", s: 0, c: 3, a: 0 },
+          { text: "A classic novel, poetry collection, or historical fiction", s: 0, c: 0, a: 3 },
+          { text: "A self-help or psychology book about people and society", s: 0, c: 1, a: 2 }
+        ]
+      },
+      {
+        text: "Honestly, how important is financial earning potential in choosing your stream?",
+        options: [
+          { text: "Very important — I want high earning potential (engineering/medicine)", s: 2, c: 2, a: 0 },
+          { text: "Quite important — I want business/financial success", s: 0, c: 3, a: 0 },
+          { text: "Important but not the only factor — impact matters too", s: 1, c: 1, a: 2 },
+          { text: "I'd rather follow my passion even if it pays less initially", s: 0, c: 0, a: 3 }
+        ]
+      }
+    ];
+
+    /* ─── STATE ─── */
+    let current = 0;
+    let answers = new Array(questions.length).fill(null);
+    let scores = { s: 0, c: 0, a: 0 };
+
+    /* ─── QUIZ FUNCTIONS ─── */
+    function startQuiz() {
+      document.getElementById('quizStart').classList.add('hidden');
+      document.getElementById('quizBody').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function renderQuestion(dir = 1) {
+      const q = questions[current];
+      const card = document.getElementById('quizCard');
+
+      card.classList.remove('quiz-slide-in', 'quiz-slide-out');
+      void card.offsetWidth;
+      card.classList.add('quiz-slide-in');
+
+      document.getElementById('qNum').textContent = `${String(current+1).padStart(2,'0')} / ${questions.length}`;
+      document.getElementById('qText').textContent = q.text;
+      document.getElementById('progressText').textContent = `Question ${current+1} of ${questions.length}`;
+      document.getElementById('progressFill').style.width = `${((current+1)/questions.length)*100}%`;
+      document.getElementById('progressBar').setAttribute('aria-valuenow', current+1);
+
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+      const labels = ['A', 'B', 'C', 'D'];
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn' + (answers[current] === i ? ' selected' : '');
+        btn.setAttribute('aria-pressed', answers[current] === i ? 'true' : 'false');
+        btn.innerHTML = `<span class="opt-label">${labels[i]}</span><span class="opt-text">${opt.text}</span>`;
+        btn.onclick = () => selectOption(i);
+        grid.appendChild(btn);
+      });
+
+      document.getElementById('prevBtn').disabled = current === 0;
+      document.getElementById('nextBtn').textContent = current === questions.length - 1 ? 'See Result 🎉' : 'Next →';
+    }
+
+    function selectOption(idx) {
+      answers[current] = idx;
+      document.querySelectorAll('.option-btn').forEach((btn, i) => {
+        btn.classList.toggle('selected', i === idx);
+        btn.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+      });
+    }
+
+    function nextQ() {
+      if (answers[current] === null) {
+        const card = document.getElementById('quizCard');
+        card.style.animation = 'shake 0.4s ease';
+        setTimeout(() => card.style.animation = '', 400);
+        return;
+      }
+      if (current === questions.length - 1) {
+        showResult();
+        return;
+      }
+      current++;
+      renderQuestion(1);
+    }
+
+    function prevQ() {
+      if (current === 0) return;
+      current--;
+      renderQuestion(-1);
+    }
+
+    function computeScores() {
+      scores = { s: 0, c: 0, a: 0 };
+      answers.forEach((ans, qi) => {
+        if (ans !== null) {
+          const opt = questions[qi].options[ans];
+          scores.s += opt.s;
+          scores.c += opt.c;
+          scores.a += opt.a;
+        }
+      });
+    }
+
+    function showResult() {
+      computeScores();
+      document.getElementById('quizBody').classList.add('hidden');
+      document.getElementById('quizResult').classList.remove('hidden');
+
+      const total = scores.s + scores.c + scores.a || 1;
+      const sp = Math.round(scores.s / total * 100);
+      const cp = Math.round(scores.c / total * 100);
+      const ap = Math.round(scores.a / total * 100);
+
+      let stream, emoji, matchText, matchStyle, desc, careers, showJEE = false;
+
+      if (scores.s >= scores.c && scores.s >= scores.a) {
+        stream = 'Science Stream';
+        emoji = '🔬';
+        matchText = `${sp}% Science Affinity`;
+        matchStyle = 'background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);color:#93c5fd';
+        desc = `You're wired for analytical thinking, logical reasoning, and the thrill of discovery. Science is your natural home. You can choose PCM (Physics, Chemistry, Maths) for engineering and tech careers, or PCB (Physics, Chemistry, Biology) if medicine excites you. Pure science research at institutions like IISER, IISc, or NISER is also a brilliant option.`;
+        careers = [
+          { icon: '⚙️', title: 'Engineering (JEE)', sub: 'IIT, NIT, IIIT pathways' },
+          { icon: '🏥', title: 'Medicine (NEET)', sub: 'MBBS, BDS, BAMS' },
+          { icon: '🧪', title: 'Pure Research', sub: 'IISER, IISc, NISER, ISI' },
+          { icon: '💻', title: 'Technology', sub: 'CS, AI, Data Science' },
+          { icon: '📐', title: 'Mathematics', sub: 'ISI, CMI, GATE, Olympiads' },
+        ];
+        showJEE = scores.s >= 20;
+      } else if (scores.c >= scores.s && scores.c >= scores.a) {
+        stream = 'Commerce Stream';
+        emoji = '📊';
+        matchText = `${cp}% Commerce Affinity`;
+        matchStyle = 'background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);color:#6ee7b7';
+        desc = `You have a sharp mind for numbers, business, and economics. Commerce will equip you with skills in accounting, finance, and business management. You could become a Chartered Accountant, economist, entrepreneur, or banker — all high-demand, high-reward careers that shape how the world functions economically.`;
+        careers = [
+          { icon: '📋', title: 'Chartered Accountant', sub: 'ICAI — CA Foundation path' },
+          { icon: '📈', title: 'Economics & Finance', sub: 'B.Com, BBA, MBA Finance' },
+          { icon: '🏦', title: 'Banking & Finance', sub: 'IBPS, RBI, SBI exams' },
+          { icon: '💼', title: 'Entrepreneurship', sub: 'Business management' },
+          { icon: '📊', title: 'CMA / CFA', sub: 'Cost & Management Accounting' },
+        ];
+      } else {
+        stream = 'Arts & Humanities';
+        emoji = '🎨';
+        matchText = `${ap}% Arts Affinity`;
+        matchStyle = 'background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);color:#fde68a';
+        desc = `You're a natural thinker, communicator, and social observer. Arts and Humanities gives you the tools to understand history, society, language, and human behaviour. From civil services (UPSC/IAS) to law, journalism, diplomacy, and literature — this stream opens doors to some of the most impactful careers in public life.`;
+        careers = [
+          { icon: '🏛️', title: 'UPSC Civil Services', sub: 'IAS, IPS, IFS — Govt.' },
+          { icon: '⚖️', title: 'Law (CLAT/AILET)', sub: 'NLU, legal practice' },
+          { icon: '📰', title: 'Journalism & Media', sub: 'Writing, broadcasting' },
+          { icon: '🌐', title: 'Linguistics & IELTS', sub: 'Foreign languages, abroad' },
+          { icon: '🗺️', title: 'History & ASI/IMD', sub: 'Archaeology, geography' },
+        ];
+      }
+
+      document.getElementById('resultEmoji').textContent = emoji;
+      document.getElementById('resultName').textContent = stream;
+      document.getElementById('resultMatch').setAttribute('style', matchStyle);
+      document.getElementById('resultMatch').textContent = matchText;
+      document.getElementById('resultDesc').textContent = desc;
+
+      // Score bars
+      setTimeout(() => {
+        document.getElementById('sciBar').style.width = sp + '%';
+        document.getElementById('comBar').style.width = cp + '%';
+        document.getElementById('artBar').style.width = ap + '%';
+        document.getElementById('sciPct').textContent = sp + '%';
+        document.getElementById('comPct').textContent = cp + '%';
+        document.getElementById('artPct').textContent = ap + '%';
+      }, 300);
+
+      // Career paths
+      const careerHtml = `
+        <div class="career-paths" role="list" aria-label="Career paths">
+          ${careers.map(c => `
+            <div class="career-path" role="listitem" tabindex="0">
+              <div class="career-path-icon" aria-hidden="true">${c.icon}</div>
+              <div class="career-path-title">${c.title}</div>
+              <div class="career-path-sub">${c.sub}</div>
+            </div>
+          `).join('')}
+        </div>`;
+      document.getElementById('careerSection').innerHTML = careerHtml;
+
+      // JEE Banner
+      if (showJEE) {
+        document.getElementById('jeeBanner').classList.remove('hidden');
+        document.getElementById('jeeBanner').innerHTML = `
+          <div class="jee-banner" role="complementary" aria-label="JEE resource">
+            <span class="jee-banner-icon" aria-hidden="true">🎓</span>
+            <div class="jee-banner-text">
+              <h4>Interested in JEE & Engineering?</h4>
+              <p>If engineering via IIT or NIT excites you, check out a comprehensive guide covering JEE preparation, branch choices, and more.</p>
+              <a href="https://iit-jee-guide.vercel.app/" target="_blank" rel="noopener noreferrer" class="jee-banner-link" aria-label="Visit IIT JEE Guide (opens in new tab)">
+                Visit IIT JEE Guide →
+              </a>
+            </div>
+          </div>`;
+      }
+
+      // Confetti
+      launchConfetti();
+    }
+
+    function retakeQuiz() {
+      current = 0;
+      answers = new Array(questions.length).fill(null);
+      document.getElementById('quizResult').classList.add('hidden');
+      document.getElementById('quizStart').classList.remove('hidden');
+      document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function shareResult() {
+      const text = `I just discovered my ideal stream on PathFinder! 🎓 Check it out: ${location.href}`;
+      if (navigator.share) {
+        try { await navigator.share({ title: 'PathFinder Result', text }); return; } catch {}
+      }
+      try { await navigator.clipboard.writeText(text); alert('Link copied to clipboard!'); } catch {}
+    }
+
+    /* ─── CONFETTI ─── */
+    function launchConfetti() {
+      const container = document.getElementById('confettiContainer');
+      container.innerHTML = '';
+      const colors = ['#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899'];
+      for (let i = 0; i < 60; i++) {
+        const el = document.createElement('div');
+        el.style.cssText = `
+          position:absolute;
+          width:${4+Math.random()*6}px;
+          height:${4+Math.random()*6}px;
+          background:${colors[Math.floor(Math.random()*colors.length)]};
+          border-radius:${Math.random()>0.5?'50%':'2px'};
+          left:${Math.random()*100}%;
+          top:${100+Math.random()*20}%;
+          animation: confettiPop ${1+Math.random()*1.5}s ease ${Math.random()*0.5}s forwards;
+        `;
+        container.appendChild(el);
+      }
+      const style = document.createElement('style');
+      style.textContent = `@keyframes confettiPop { to { top:-10%; transform:translateX(${(Math.random()-0.5)*200}px) rotate(${Math.random()*720}deg); opacity:0; } }`;
+      document.head.appendChild(style);
+    }
+
+    /* ─── SETTINGS PANEL ─── */
+    const openBtn = document.getElementById('openPanelBtn');
+    const closeBtn = document.getElementById('closePanelBtn');
+    const overlay = document.getElementById('settingsOverlay');
+    const panel = document.getElementById('settingsPanel');
+
+    function openSettings() {
+      panel.classList.add('open');
+      overlay.classList.add('open');
+      panel.focus();
+    }
+    function closeSettings() {
+      panel.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+    openBtn.addEventListener('click', openSettings);
+    closeBtn.addEventListener('click', closeSettings);
+    overlay.addEventListener('click', closeSettings);
+
+    // Theme buttons
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.body.setAttribute('data-theme', btn.dataset.theme);
+        document.querySelectorAll('.theme-btn').forEach(b => {
+          b.classList.toggle('active', b === btn);
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
+      });
+    });
+
+    // Font buttons
+    document.querySelectorAll('.font-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = btn.dataset.f;
+        document.body.setAttribute('data-font', f === 'sora' ? '' : f);
+        if (f === 'sora') document.body.removeAttribute('data-font');
+        document.querySelectorAll('.font-btn').forEach(b => {
+          b.classList.toggle('active', b === btn);
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
+      });
+    });
+
+    /* ─── CURSOR ─── */
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animateCursor() {
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    document.querySelectorAll('a,button,.option-btn,.stream-card,.step-card,.career-path').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2.5)'; ring.style.transform = 'translate(-50%,-50%) scale(1.5)'; });
+      el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.transform = 'translate(-50%,-50%) scale(1)'; });
+    });
+
+    /* ─── SCROLL ANIMATIONS ─── */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    /* ─── SCROLL TOP ─── */
+    const scrollTopBtn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    /* ─── PARTICLES ─── */
+    function spawnParticle() {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.setProperty('--dx', (Math.random() - 0.5) * 100 + 'px');
+      p.style.animationDuration = (8 + Math.random() * 8) + 's';
+      p.style.animationDelay = (Math.random() * 4) + 's';
+      container.appendChild(p);
+      setTimeout(() => p.remove(), 16000);
+    }
+    setInterval(spawnParticle, 800);
+    for (let i = 0; i < 10; i++) spawnParticle();
+
+    /* ─── COPYRIGHT YEAR ─── */
+    document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
+    /* ─── LOADER ─── */
+    window.addEventListener('load', () => {
+      setTimeout(() => { document.getElementById('loader').classList.add('done'); }, 1200);
+    });
+
+    /* ─── QUIZ CARD SHAKE CSS ─── */
+    const shakeStyle = document.createElement('style');
+    shakeStyle.textContent = `@keyframes shake { 0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)} }`;
+    document.head.appendChild(shakeStyle);
+
+    /* ─── KEYBOARD NAV ─── */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeSettings();
+    });
+  </script>
+</body>
+</html>
