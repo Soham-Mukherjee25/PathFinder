@@ -15,6 +15,7 @@
 
   <title>PathFinder — Your Stream, Your Future</title>
 
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Outfit:wght@400;500;600;700&display=swap" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -100,11 +101,12 @@
     ══════════════════════════════════════════ */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{
-      scroll-behavior:smooth;
-      overflow-x:hidden;
-      /* GPU-accelerated scrolling */
-      -webkit-overflow-scrolling:touch;
-    }
+  scroll-behavior:smooth;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:none; /* prevents bounce jank on Android */
+  touch-action:pan-y;
+  }
     body{
       font-family:var(--font-body);
       background:var(--bg);
@@ -117,6 +119,8 @@
       /* Promote to composite layer for smoother paints */
       will-change:background-color;
       transition:background var(--t-slow) var(--ease), color var(--t-slow) var(--ease);
+      overscroll-behavior:none;
+      touch-action:pan-y;
     }
     ::selection{background:var(--gold);color:#0b0f1a;}
     img{display:block;max-width:100%;}
@@ -131,26 +135,26 @@
     /* ══════════════════════════════════════════
        CUSTOM CURSOR
     ══════════════════════════════════════════ */
-    .cursor,.cursor-ring{
-      position:fixed;border-radius:50%;pointer-events:none;
-      z-index:99998;transform:translate(-50%,-50%);
-      /* Use transform only — no top/left during animation = GPU composited */
-      will-change:transform;
-    }
-    .cursor{
-      width:10px;height:10px;
-      background:var(--gold);
-      transition:width .2s,height .2s,opacity .3s;
-    }
-    .cursor-ring{
-      width:34px;height:34px;
-      border:1.5px solid var(--gold);
-      opacity:0.5;
-      transition:width .2s,height .2s,border-color .3s;
-    }
-    .cursor.hover{width:18px;height:18px;}
-    .cursor-ring.hover{width:50px;height:50px;opacity:0.3;}
-    @media(hover:none){.cursor,.cursor-ring{display:none;}}
+.cursor,.cursor-ring{
+  position:fixed;border-radius:50%;pointer-events:none;
+  z-index:99998;
+  will-change:transform;
+  top:0;left:0; /* anchor at origin, move via transform only */
+}
+.cursor{
+  width:10px;height:10px;
+  background:var(--gold);
+  transition:width .18s,height .18s,opacity .25s;
+}
+.cursor-ring{
+  width:34px;height:34px;
+  border:1.5px solid var(--gold);
+  opacity:0.5;
+  transition:width .18s,height .18s,border-color .25s;
+}
+.cursor.hover{width:18px;height:18px;}
+.cursor-ring.hover{width:50px;height:50px;opacity:0.3;}
+@media(hover:none){.cursor,.cursor-ring{display:none;}} 
 
     /* ══════════════════════════════════════════
        NOISE + VIGNETTE OVERLAY
@@ -199,6 +203,8 @@
       /* Composite layer — no repaints on scroll */
       will-change:transform;
       transition:background var(--t) var(--ease),border-color var(--t) var(--ease);
+      transform:translateZ(0);
+      -webkit-transform:translateZ(0);
     }
     [data-theme="light"] nav{background:rgba(244,242,238,0.75);}
     nav.scrolled{background:rgba(11,15,26,0.88);border-color:var(--border-hi);}
@@ -518,6 +524,7 @@
        SHARED SECTION STYLES
     ══════════════════════════════════════════ */
     section{padding:6.5rem 2rem;}
+    section{padding:6.5rem 2rem;content-visibility:auto;contain-intrinsic-size:0 600px;}
     .container{max-width:1120px;margin:0 auto;}
 
     .section-eyebrow{
@@ -729,6 +736,7 @@
       padding:2.75rem;
       backdrop-filter:blur(24px);
       position:relative;overflow:hidden;
+      transform:translateZ(0);
     }
     .quiz-card::before{
       content:'';position:absolute;top:0;left:0;right:0;height:2px;
@@ -803,6 +811,7 @@
       border-radius:var(--radius);padding:3.25rem;
       backdrop-filter:blur(24px);text-align:center;
       position:relative;overflow:hidden;
+      transform:translateZ(0);
     }
     .results-card::before{
       content:'';position:absolute;top:0;left:0;right:0;height:2px;
@@ -1488,12 +1497,13 @@
   }
 
   function nextQ() {
-    if (answers[current] === null) {
-      const card = document.getElementById('quizCard');
-      card.style.animation = 'shake 0.4s ease';
-      setTimeout(() => card.style.animation = '', 420);
-      return;
-    }
+    if(answers[current]===null){
+  const card=document.getElementById('quizCard');
+  card.style.animation='none';
+  card.offsetWidth; // force reflow once, intentionally
+  card.style.animation='shake 0.4s ease';
+  return;
+}
     if (current === questions.length - 1) { showResult(); return; }
     current++;
     renderQuestion();
@@ -1701,36 +1711,35 @@
     });
   });
 
-  /* ─── CURSOR (RAF-driven, no top/left writes) ─── */
-  const cursor  = document.getElementById('cursor');
-  const ring    = document.getElementById('cursorRing');
-  let mx = -100, my = -100;
-  let rx = -100, ry = -100;
-  const LERP = 0.13;
+/* ─── CURSOR (pure transform, zero layout cost) ─── */
+const cursor  = document.getElementById('cursor');
+const ring    = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+const LERP=0.12;
+let cursorRAF;
 
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
 
-  (function animateCursor() {
-    cursor.style.left = mx + 'px';
-    cursor.style.top  = my + 'px';
-    rx += (mx - rx) * LERP;
-    ry += (my - ry) * LERP;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(animateCursor);
-  })();
+function animateCursor(){
+  rx+=(mx-rx)*LERP; ry+=(my-ry)*LERP;
+  cursor.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;
+  ring.style.transform  =`translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+  cursorRAF=requestAnimationFrame(animateCursor);
+}
+animateCursor();
 
-  const hoverTargets = 'a,button,.option-btn,.stream-card,.step-card,.career-path';
-  document.addEventListener('mouseover', e => {
-    if (e.target.closest(hoverTargets)) {
-      cursor.classList.add('hover'); ring.classList.add('hover');
-    }
-  }, { passive: true });
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest(hoverTargets)) {
-      cursor.classList.remove('hover'); ring.classList.remove('hover');
-    }
-  }, { passive: true });
+const hoverTargets='a,button,.option-btn,.stream-card,.step-card,.career-path';
+document.addEventListener('mouseover',e=>{
+  if(e.target.closest(hoverTargets)){cursor.classList.add('hover');ring.classList.add('hover');}
+},{passive:true});
+document.addEventListener('mouseout',e=>{
+  if(e.target.closest(hoverTargets)){cursor.classList.remove('hover');ring.classList.remove('hover');}
+},{passive:true});
+/* Pause RAF when tab hidden */
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){cancelAnimationFrame(cursorRAF);}
+  else{animateCursor();}
+});
 
   /* ─── SCROLL ANIMATIONS (IntersectionObserver — zero scroll cost) ─── */
   const observer = new IntersectionObserver(entries => {
@@ -1743,40 +1752,37 @@
   }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-  /* ─── NAV: scroll class (passive) ─── */
-  const mainNav = document.getElementById('mainNav');
-  window.addEventListener('scroll', () => {
-    mainNav.classList.toggle('scrolled', window.scrollY > 60);
-  }, { passive: true });
-
-  /* ─── SCROLL TO TOP ─── */
-  const scrollTopBtn = document.getElementById('scrollTop');
-  window.addEventListener('scroll', () => {
-    scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
-  }, { passive: true });
-  scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+/* ─── SCROLL: single throttled handler ─── */
+let scrollTicking=false;
+window.addEventListener('scroll',()=>{
+  if(scrollTicking)return;
+  scrollTicking=true;
+  requestAnimationFrame(()=>{
+    const sy=window.scrollY;
+    mainNav.classList.toggle('scrolled',sy>60);
+    scrollTopBtn.classList.toggle('visible',sy>500);
+    scrollTicking=false;
+  });
+},{passive:true});
 
   /* ─── PARTICLES (sparse for performance) ─── */
-  function spawnParticle() {
-    const container = document.getElementById('particles');
-    if (!container) return;
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = 1.5 + Math.random() * 2;
-    p.style.cssText = `
-      width:${size}px;height:${size}px;
-      left:${Math.random()*100}%;
-      top:${Math.random()*100 + 100}%;
-      --dx:${(Math.random()-0.5)*80}px;
-      animation-duration:${10+Math.random()*10}s;
-      animation-delay:${Math.random()*6}s;
-    `;
-    container.appendChild(p);
-    setTimeout(() => p.remove(), 22000);
-  }
-  /* Spawn fewer particles — performance */
-  setInterval(spawnParticle, 1200);
-  for (let i = 0; i < 8; i++) spawnParticle();
+function spawnParticle(){
+  const container=document.getElementById('particles');
+  if(!container||document.hidden)return;
+  const p=document.createElement('div');
+  p.className='particle';
+  const size=1.5+Math.random()*2;
+  p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:105%;--dx:${(Math.random()-.5)*80}px;animation-duration:${10+Math.random()*10}s;animation-delay:0s;`;
+  container.appendChild(p);
+  /* Self-cleanup — no setTimeout leak */
+  p.addEventListener('animationend',()=>p.remove(),{once:true});
+}
+let particleInterval=setInterval(spawnParticle,1800);
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){clearInterval(particleInterval);}
+  else{particleInterval=setInterval(spawnParticle,1800);}
+});
+for(let i=0;i<6;i++)spawnParticle();
 
   /* ─── QUIZ SHAKE ─── */
   if (!document.getElementById('shakeStyle')) {
